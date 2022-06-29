@@ -1,0 +1,76 @@
+.container-center {
+    display:flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+}
+
+.login {
+    background-color: #181C2E;
+    width: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 5px;
+}
+
+.login-area {
+    background-color: #f94d4b;
+    width: 100%;
+    display: flex;
+    padding: 0.8rem;
+    justify-content: center;
+    border-radius: 5px 5px 0 0;
+
+}
+
+.login-area img {
+     /*tamanho da logo SAMI
+    width: 15rem;
+    height: 130px;*/
+}
+
+form {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+}
+
+form h1 {
+    text-align: center;
+    color: #fff;
+    margin: 0.6em 0 0.6em 0;
+    font: 1.8em "Roboto", sans-serif; 
+}
+
+.login input {
+    margin-bottom: 15px;
+    height: 35px;
+    border: 0;
+    padding: 1.0em;
+    border-radius: 7px;
+    background-color: #fff;
+}
+
+form button {
+    height: 35px;
+    border: 0;
+    border-radius: 7px;
+    background-color: #f94d4b;
+    color: #fff;
+    font: 1.3em "Roboto", sans-serif;
+}
+
+form button:hover {
+    background-color: #fff;
+    color: #f94d4b;
+    border: 0.5px #f94d4b solid;
+}
+
+.login a {
+    margin: 1.5em 0;
+    color: #ddd;
+    cursor: pointer;
+}
