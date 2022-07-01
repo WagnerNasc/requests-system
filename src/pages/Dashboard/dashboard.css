@@ -22,7 +22,7 @@
 .new {
     float: right;
     margin-bottom: 0.8em;
-    background-color: #83bf02;
+    /* background-color: #83bf02; */
     color: #fff;
     font-weight: 600;
     font-size: 1.1em;
@@ -33,11 +33,11 @@
     align-items: center;
     border-radius: 6px;
 
+    background: linear-gradient(to top right, #f84d4b, #3A1D71);
     transition: ease 0.2s;
 }
 
 .new:hover {
-    background-color: #5fd204;
     transform:scale(1.1);
 }
 
@@ -110,16 +110,18 @@ table td .badge {
     margin: 2em 0 1em 0;
     padding: .6em 1em;
     height: 2rem;
-    border: 0;
     border-radius: 5px;
-    background-color: #181C2E;
-    color: #F8F8F8;
+    background-color: #272e4f;
+    border: none;
+    color: #fff;
+    transition: all ease-in-out .4s;
 }
 
 .btn-more:hover {
-    background-color: #f8f8f8;
-    border: 1px solid #DDD;
-    color: #181C2E;
+    background-color: #fff;
+    color: #272e4f;
+    border: 1px solid #272e4f;
+
 }
 
 @media screen and (max-width: 600px) {

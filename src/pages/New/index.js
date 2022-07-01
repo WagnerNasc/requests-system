@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
+import  { useHistory, useParams } from 'react-router-dom';
 import firebase from '../../services/firebaseConnection';
 
 import Header from '../../components/Header';
@@ -6,10 +7,13 @@ import Title from '../../components/Title';
 import { AuthContext } from '../../contexts/auth';
 import './new.css';
 
-import { FiPlusCircle } from "react-icons/fi";
+import { FiPlusCircle, FiEdit } from "react-icons/fi";
 import { toast } from 'react-toastify';
 
 export default function New() {
+    const { id } = useParams();
+    const history = useHistory();
+
     const [ subject, setSubject ] = useState('Support');
     const [ status, setStatus ] = useState('Opened');
     const [ complement, setComplement ] = useState('');
@@ -17,6 +21,7 @@ export default function New() {
     const [ loadCustomers, setLoadCustomers ] = useState(true);
     const [ customers, setCustomers ] = useState([]); // clientes
     const [ customerSelected, setCustomerSelected ] = useState(0); // para alterar o select
+    const [ idCustomer, setIdCustomer ] = useState(false);
     
     const { user } = useContext(AuthContext); // trazer o usuário
 
@@ -48,6 +53,10 @@ export default function New() {
                 }
                 setCustomers(list);
                 setLoadCustomers(false);
+
+                if(id) {
+                    loadId(list);
+                }
             })
             .catch((err) => {
                 console.log(err);
@@ -63,6 +72,28 @@ export default function New() {
         loadCustomers();
     }, [])
 
+    console.log(id);
+
+    async function loadId(list) {
+        await firebase.firestore().collection('requests')
+        .doc(id)
+        .get()
+        .then((snapshot) => {
+            setSubject(snapshot.data().subject)
+            setStatus(snapshot.data().status)
+            setComplement(snapshot.data().complement)
+
+            let index = list.findIndex(item => item.id === snapshot.data().clientId);
+            console.log(index);
+            setCustomerSelected(index);
+            setIdCustomer(true);
+        })
+        .catch((err) => {
+            console.log('Ocorreu um erro no ID da rota ', err);
+            setIdCustomer(false);
+        })
+    }
+
 
     /* Chama quando a Option for aterada no Select */
     function handleChangeCustomers(e) {
@@ -74,6 +105,31 @@ export default function New() {
 
     async function handleRegister(e) {
         e.preventDefault();
+
+        if(idCustomer) {
+            await firebase.firestore().collection('requests')
+            .doc(id)
+            .update({ 
+                client:  customers[customerSelected].companyName,
+                clientId: customers[customerSelected].id,
+                subject: subject,
+                status: status,
+                complement: complement,
+                userId: user.uid
+            })
+            .then(() => {
+                toast.success('Chamado alterado com sucesso!');
+                setComplement('');
+                setCustomerSelected([0]);
+                history.push('/dashboard');
+            })
+            .catch((err) => {
+                toast.error('Ops! Erro ao alterar, tente mais tarde!');
+                console.log(err);
+            })
+
+            return; // para a execução do código
+        }
         
         await firebase.firestore().collection('requests')
         .add({
@@ -109,10 +165,18 @@ export default function New() {
     return (
         <div>
             <Header/>
+
             <div className="content">
-                <Title name="Criar Novo Chamado">
-                    <FiPlusCircle size={25}/>
-                </Title>
+                {id && idCustomer ? (
+                    <Title name="Editar Chamado">
+                        <FiEdit size={25}/>
+                    </Title>
+                ) : (
+                    <Title name="Criar Novo Chamado">
+                        <FiPlusCircle size={25}/>
+                    </Title>
+                )
+                }
 
                 <div className="container">
                     <form className="form-profile form-new" onSubmit={handleRegister}>

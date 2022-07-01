@@ -4,23 +4,42 @@ import Header from '../../components/Header';
 import Title from '../../components/Title';
 import './dashboard.css';
 
-import { FiMessageSquare, FiPlus, FiSearch, FiEdit2 } from "react-icons/fi";
-import { Link } from 'react-router-dom';
-import firebase from '../../services/firebaseConnection';
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
+import { FiMessageSquare, FiPlus, FiSearch, FiEdit2 } from "react-icons/fi";
+
+import { Link } from 'react-router-dom';
+import firebase from '../../services/firebaseConnection';
+import Modal from '../../components/Modal';
 
 const listRef = firebase.firestore().collection('requests').orderBy('created', 'asc');
 
 export default function Dashboard() {
-        const [requests, setRequests] = useState([]);
-        const [loading, setLoading] = useState(true);
-        const [loadingMore, setLoadingMore] = useState(false); // para quando clicar para trazer os demais chamados
-        const [isEmpty, setIsEmpty] = useState(false);
-        const [lastDocs, setLastDocs] = useState();
 
+    const [requests, setRequests] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false); // para quando clicar para trazer os demais chamados
+    const [isEmpty, setIsEmpty] = useState(false);
+    const [lastDocs, setLastDocs] = useState();
+
+    const [showPostModal, setShowPostModal] = useState(false);
+    const [detail, setDetail] = useState();
 
     useEffect(() => {
+
+        async function loadRequest() {
+            await listRef.limit(5)
+            .get()
+            .then((snapshot) => {
+                updateState(snapshot);
+            })
+            .catch((err) => {
+                console.log('Ops! Deu ruim, tente mais tarde. ', err);
+                setLoadingMore(false);
+            })
+    
+            setLoading(false);
+        }
 
         loadRequest();
         
@@ -30,19 +49,6 @@ export default function Dashboard() {
 
     }, []);
 
-    async function loadRequest() {
-        await listRef.limit(5)
-        .get()
-        .then((snapshot) => {
-            updateState(snapshot);
-        })
-        .catch((err) => {
-            console.log('Ops! Deu ruim, tente mais tarde. ', err);
-            setLoadingMore(false);
-        })
-
-        setLoading(false);
-    }
 
     async function updateState(snapshot) {
         const isCollectionEmpty = snapshot.size === 0;
@@ -98,6 +104,13 @@ export default function Dashboard() {
             console.log(err);
             toast.error('Ops! Ocorreu um erro, tente mais tarde!');
         })
+    }
+
+    function togglePostModal(item) {
+        setShowPostModal(!showPostModal);
+
+        console.log(!showPostModal);
+        setDetail(item);
     }
 
     if(loading) {
@@ -168,12 +181,12 @@ export default function Dashboard() {
                                                     </td>
                                                     <td data-label="Data Cadastro">{item.createdFormated}</td>
                                                     <td data-label="#">
-                                                        <button className="action" style={{backgroundColor: '#3583f6'}}>
+                                                        <button className="action" style={{backgroundColor: '#3A1D71'}} onClick={() => togglePostModal(item)}>
                                                             <FiSearch size={25} color="#FFF"/>
                                                         </button>
-                                                        <button className="action" style={{backgroundColor: '#f6a935'}}>
+                                                        <Link to={`/new/${item.id}`} className="action" style={{backgroundColor: '#f84d4b'}}>
                                                             <FiEdit2 size={25} color="#FFF"/>
-                                                        </button>
+                                                        </Link>
                                                     </td>
                                                 </tr>
                                             )
@@ -191,6 +204,13 @@ export default function Dashboard() {
                     )}
 
             </div>
+            {showPostModal && (
+                <Modal
+                    content={detail}
+                    close={togglePostModal}
+                    styleStatus={styleStatus}
+                />
+            )}
         </div>
     )
 }
