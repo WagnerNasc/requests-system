@@ -1,3 +1,8 @@
+# Welcome to the Requests System
+
+This project aims to facilitate the opening of Service Orders (SO) and the management of Service Level Agreements (SLA).
+Access this link and create your account in "Criar sua Conta": [requests-system.vercel.app](https://requests-system.vercel.app/).
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -30,5 +35,3 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-
